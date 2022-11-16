@@ -56,12 +56,73 @@ Unit tests ensure that our code is flexible, maintainable, and reusable. The rea
 ## Clean tests
 
 What makes a test clean? There are three factors to consider. Readability must come first, second, and third. When writing unit tests, readability may be even more important than when writing code for real use. How are tests made readable? Clarity, simplicity, and expression density are the same factors that make all code readable. In a test, you want to say a lot with as few expressions as possible.
-First Failing Test
 
-It is prudent to write a failing test that allows the test to pass. Why? Because you'll know that when you click the Run button in your IDE, the test you're working on is executed. Also, if the test fails, it means that the functionality you're testing for doesn't exist yet. If you see a green bar that you didn't expect, it means that a guess you made about the code base is wrong.
+## Before we start
+
+In this project, we're building a simple TODO API application.
+Initially, the **/src/app.ts** looks like this:
+
+```ts
+import express, { Application } from "express";
+
+const app: Application = express();
+
+app.use(express.json());
+
+export default app;
+```
+
+Furthermore, you should turn requirements into a list of tests, such as in **app.test.ts**:
+
+```ts
+describe("Todos API", () => {
+  const rootUrl = "http://localhost:3000";
+
+  it("GET /todos --> array todos", () => {});
+
+  it("GET /todos/id --> specific todo by ID", () => {});
+
+  it("POST /todos --> created todo", () => {});
+
+  it("GET /todos --> validates request body", () => {});
+});
+```
+
+If we run the tests now, all of them will succeed.
+
+## First Failing Test
+
+It is prudent to write a failing test that allows the test to pass. Why? Because you'll know that when you click the Run button in your IDE, the test you're working on is executed. Also, if the test fails, it means that the functionality you're testing for doesn't exist yet. If you see a green bar that you didn't expect, it means that an assumption you made about the code base is wrong. So write the first failing test starting with: **GET /todos --> array todos**.
+
+```ts
+import request from "supertest";
+
+import app from "../app";
+
+describe("Todos API", () => {
+  const rootUrl = "http://localhost:3000";
+
+  it("GET /todos --> array todos", async () => {
+    const response = await request(app).get(`${rootUrl}/todos`);
+    expect(response.status).toBe(200);
+  });
+
+  // Rest of code omitted for brevity
+});
+```
+
+This results in a failing test:
+
+```ts
+ FAIL  src/__tests__/app.test.ts
+  Todos API
+    × GET /todos --> array todos (54 ms)
+```
 
 We now have a test that tells us when we're finished with that particular task. It will not tell us things like "you're 90% done" or "just five minutes more." We will know when the test passes or when the code conforms to our expectations.
-First, fail the test on purpose to make sure that our test execution catches the failure and that we're really running the newly added test. Then, implement the test and see the bar turn green again.
+
+First, fail the test on purpose to make sure that our test execution catches the failure and that we're really running the newly added test.
+Then, implement the test and see the bar turn green again.
 
 ## Making the Test Succeed
 
