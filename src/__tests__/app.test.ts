@@ -3,7 +3,7 @@ import request from "supertest";
 import app from "../app";
 
 describe("Todos API", () => {
-  const rootUrl = "http://localhost:3000";
+  const rootUrl = "";
 
   it("GET /todos --> array todos", async () => {
     const response = await request(app).get(`${rootUrl}/todos`);
