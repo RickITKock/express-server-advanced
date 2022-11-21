@@ -89,7 +89,7 @@ When you run the test, it will result in a failed test:
  Received: 404
 
        8 |   it("GET /todos --> array todos", async () => {
-       9 |     const response = await request(app).get(`${rootUrl}/todos`);
+       9 |     const response = await request(app).get(`/todos`);
     > 10 |     expect(response.status).toBe(200);
          |                             ^
       11 |   });
@@ -117,7 +117,7 @@ const app: Application = express();
 
 app.use(express.json());
 
-app.get("/todos/", (req, res) => {
+app.get("/todos", (req, res) => {
   res.send();
 });
 
@@ -134,3 +134,70 @@ The test will now succeed and display the following result:
 
 Although it may seem counterintuitive at first, pushing ourselves a little further to extract the desired behavior from our tests is beneficial.
 We've written a single failing test to show us the way forward, added just enough production code to get the test to compile, and now we need to create the functionality our test requires.
+
+## Writing Another Test
+
+Now that we know a page can be found using the url, it still needs to return some data. We expect to get an array of todo objects. So, first we will add a test to check for truthy content.
+
+```ts
+it("GET /todos --> array todos", async () => {
+  const response = await request(app).get(`/todos`);
+  expect(response.status).toBe(200);
+  expect(response.body).toEqual(
+    expect.arrayContaining([
+      { todo: "Todo list item 1" },
+      { todo: "Todo list item 2" },
+    ])
+  );
+});
+
+// Rest of code omitted for brevity
+```
+
+We've added a test to check if our get method returns an array containing todo objects. Our simple get method will surely no longer pass this test, which was our goal.
+
+The question of how to pass the test as quickly and easily as possible comes up again. For the time being, we just send a hardcoded todo object using the body parameter. Because it uses several bearings to guide the implementation in the right direction, this technique is aptly called "triangulation."
+
+```ts
+import express, { Application } from "express";
+
+const app: Application = express();
+
+app.use(express.json());
+
+app.get("/todos", (req, res) => {
+  res.send([{ todo: "Todo list item 1" }, { todo: "Todo list item 2" }]);
+});
+
+export default app;
+```
+
+Our test passes once more with little effort. Because we have that hard-coded part in there, our test isn't good enough yet, so let's keep triangulating to remove the last bits of literal strings from our code. We're being disciplined and resisting the urge to "just write the code and be done with it." We'll get there in the end. Remember, baby steps? All tests have passed, we're on solid ground (as evidenced by a green bar), and we know exactly where we are.
+
+## Refactoring
+
+Refactoring production and/or test code is the next step. Do you see anything that needs to be refactored? Is there any duplication that bothers you? Are there any less-than-ideal code constructs? When we find, for example, that something is implemented wrongly or is completely missing while working on one test, it's usually a good idea to write down a quick reminder and keep working. This allows us to focus on one task at a time rather than overloading our brains by switching between multiple things (and likely messing up our code base in the process). Consider what we could improve in the test code for a moment: duplication, semantic redundancy,... anything that catches your eye. Is there anything we should clean up? See what kind of smells you detect in the code we have so far.
+
+We could, for instance, extract the hard-coded array from the test and assign it to a variable.
+
+```ts
+const todosStub = [{ todo: "Todo list item 1" }, { todo: "Todo list item 2" }];
+
+it("GET /todos --> array todos", async () => {
+  const response = await request(app).get(`/todos`);
+  expect(response.status).toBe(200);
+  expect(response.body).toEqual(expect.arrayContaining(todosStub));
+});
+
+// Rest of code omitted for brevity
+```
+
+Verify the test is still valid after the change by running it again. This process should be continued until it is finished.
+
+## Summary
+
+Test-driven development is an effective method for producing better software more quickly. This is done by focusing on what is most important right now, making that small piece work, and then cleaning up any messes we might have made along the way, keeping the code base healthy.
+
+Programming by intention, or writing the test as if the ideal implementation already exists, is a key part of this cycle of first writing a test, then writing the code to pass it, and then refactoring the design. This is a tool for creating designs that can be tested as well as used.
+
+After experiencing the TDD cycle and seeing TDD in action, we realized that our current design isn't quite up to par. Our goal was to write software using the test-code-refactor (or red-green-green) cycle, starting with a small set of tests that described the desired behavior. We can make rapid progress with the tests watching our backs, and we're not afraid to refactor because we know the safety net will catch us if we fail to retain functionality as is.
