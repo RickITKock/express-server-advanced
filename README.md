@@ -35,9 +35,11 @@ What makes a test clean? There are three factors to consider. Readability must c
 ## Before we start
 
 In this project, we're building a simple TODO API application.
-Initially, the **/src/app.ts** looks like this:
+Initially, the code looks like this:
 
 ```ts
+// file: ./src/app.ts
+
 import express, { Application } from "express";
 
 const app: Application = express();
@@ -47,9 +49,11 @@ app.use(express.json());
 export default app;
 ```
 
-Furthermore, you should turn requirements into a list of tests, such as in **app.test.ts**:
+Furthermore, you should turn requirements into a list of tests:
 
 ```ts
+// file: ./src/__tests__/app.test.ts
+
 describe("Todos API", () => {
   it("GET /todos --> array todos", () => {});
 
@@ -68,6 +72,8 @@ If we run the tests now, all of them will succeed.
 It is prudent to write a failing test that allows the test to pass. Why? Because you'll know that when you run the test, the test you're working on is executed. Also, if the test fails, it means that the functionality you're testing for doesn't exist yet. If you see a green bar that you didn't expect, it means that an assumption you made about the code base is wrong. So write the first failing test starting with: **GET /todos --> array todos** in **app.test.ts** as shown below.
 
 ```ts
+// file: ./src/__tests__/app.test.ts
+
 import request from "supertest";
 
 import app from "../app";
@@ -111,6 +117,8 @@ The test results show that the page cannot be found because a 404 status code is
 We want the test to be simple and quick. A red bar indicates that our code is unstable. We want to get out of that state and back on solid ground as soon as possible. How do we make the test pass as quickly and easily as possible? We'll send a blank response in this instance, as shown below.
 
 ```ts
+// file: ./src/app.ts
+
 import express, { Application } from "express";
 
 const app: Application = express();
@@ -124,7 +132,7 @@ app.get("/todos", (req, res) => {
 export default app;
 ```
 
-The test will now succeed and display the following result:
+When you run the test, it should now succeed and display the following result:
 
 ```console
  PASS  src/__tests__/app.test.ts
@@ -135,11 +143,13 @@ The test will now succeed and display the following result:
 Although it may seem counterintuitive at first, pushing ourselves a little further to extract the desired behavior from our tests is beneficial.
 We've written a single failing test to show us the way forward, added just enough production code to get the test to compile, and now we need to create the functionality our test requires.
 
-## Writing Another Test
+## Writing Another Test/Assertion
 
-Now that we know a page can be found using the url, it still needs to return some data. We expect to get an array of todo objects. So, first we will add a test to check for truthy content.
+Now that we know a page can be found using the url, it still needs to return some data. We expect to get an array of todo objects. So, first we will add a test to check for truthy content:
 
 ```ts
+// file: ./src/__tests__/app.test.ts
+
 it("GET /todos --> array todos", async () => {
   const response = await request(app).get(`/todos`);
   expect(response.status).toBe(200);
@@ -159,6 +169,8 @@ We've added a test to check if our get method returns an array containing todo o
 The question of how to pass the test as quickly and easily as possible comes up again. For the time being, we just send a hardcoded todo object using the body parameter. Because it uses several bearings to guide the implementation in the right direction, this technique is aptly called "triangulation."
 
 ```ts
+// file: ./src/app.ts
+
 import express, { Application } from "express";
 
 const app: Application = express();
@@ -178,9 +190,11 @@ Our test passes once more with little effort. Because we have that hard-coded pa
 
 Refactoring production and/or test code is the next step. Do you see anything that needs to be refactored? Is there any duplication that bothers you? Are there any less-than-ideal code constructs? When we find, for example, that something is implemented wrongly or is completely missing while working on one test, it's usually a good idea to write down a quick reminder and keep working. This allows us to focus on one task at a time rather than overloading our brains by switching between multiple things (and likely messing up our code base in the process). Consider what we could improve in the test code for a moment: duplication, semantic redundancy,... anything that catches your eye. Is there anything we should clean up? See what kind of smells you detect in the code we have so far.
 
-We could, for instance, extract the hard-coded array from the test and assign it to a variable.
+We could, for instance, extract the hard-coded array from the test and assign it to a variable. We may also want to refactor production code also.
 
 ```ts
+// file: ./src/__tests__/app.test.ts
+
 const todosStub = [{ todo: "Todo list item 1" }, { todo: "Todo list item 2" }];
 
 it("GET /todos --> array todos", async () => {
@@ -192,7 +206,7 @@ it("GET /todos --> array todos", async () => {
 // Rest of code omitted for brevity
 ```
 
-Verify the test is still valid after the change by running it again. This process should be continued until it is finished.
+Verify the test is still valid after the change by running the tests again. This process should be continued until the project is finished.
 
 ## Summary
 
