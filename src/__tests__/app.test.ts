@@ -19,11 +19,15 @@ describe("Todos API", () => {
 
   // it("GET /todos/id --> specific todo by ID", () => {});
   it("GET /todos/:id --> Single todo item", async () => {
+    // Given
     const todoId = 2;
+
+    // When
     const response = await request(app).get(`/todos/${todoId}`);
+
+    // Then
     expect(response.status).toBe(200);
-    console.log(Todo.parse(response.body));
-    // expect(response.body).toEqual(todosStub[todoId - 1]);
+    expect(Todo.safeParse(response.body).success).toBe(true);
   });
 
   // it("POST /todos --> created todo", () => {});
