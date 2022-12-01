@@ -16,7 +16,6 @@ describe("Todos API", () => {
     expect(response.body).toEqual(expect.arrayContaining(Array<Todo>()));
   });
 
-  // it("GET /todos/id --> specific todo by ID", () => {});
   it("GET /todos/:id --> Single todo item", async () => {
     // Given
     const todoId = 2;
