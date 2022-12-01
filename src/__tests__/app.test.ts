@@ -6,15 +6,14 @@ import app from "../app";
 type Todo = z.infer<typeof Todo>;
 
 describe("Todos API", () => {
-  const todosStub: Array<Todo> = [
-    { id: "1", todo: "Todo list item 1" },
-    { id: "2", todo: "Todo list item 2" },
-  ];
-
   it("GET /todos --> Array of todos", async () => {
+    // Given
+    // When
     const response = await request(app).get(`/todos`);
+
+    // Then
     expect(response.status).toBe(200);
-    // expect(response.body).toEqual(expect.arrayContaining(todosStub));
+    expect(response.body).toEqual(expect.arrayContaining(Array<Todo>()));
   });
 
   // it("GET /todos/id --> specific todo by ID", () => {});
@@ -31,6 +30,4 @@ describe("Todos API", () => {
   });
 
   // it("POST /todos --> created todo", () => {});
-
-  // it("GET /todos --> validates request body", () => {});
 });
