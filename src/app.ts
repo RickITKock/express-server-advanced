@@ -1,6 +1,10 @@
 import express, { Application } from "express";
+import { z } from "zod";
+import { Todo } from "./models/Todo";
 
-const todos = [
+type Todo = z.infer<typeof Todo>;
+
+const todos: Array<Todo> = [
   { id: "1", todo: "Todo list item 1" },
   { id: "2", todo: "Todo list item 2" },
 ];
