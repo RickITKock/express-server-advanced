@@ -1,5 +1,6 @@
 import express, { Application } from "express";
 import { z } from "zod";
+import { logger } from "./logger";
 import { Todo } from "./models/Todo";
 
 type Todo = z.infer<typeof Todo>;
@@ -26,7 +27,7 @@ app.get("/todos/:id", (req, res) => {
     }
     throw parsedFoundTodo;
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     res.status(404).send("Not Found");
   }
 });
