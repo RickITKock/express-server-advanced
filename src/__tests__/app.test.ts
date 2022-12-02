@@ -40,5 +40,15 @@ describe("Todos API", () => {
     expect(response.status).toBe(404);
   });
 
-  // it("POST /todos --> created todo", () => {});
+  it("POST (200) /todos --> Create a new Todo", async () => {
+    // Given
+    const newTodo: Todo = { id: "3", todo: "New todo item" };
+
+    // When
+    const response = await request(app).post(`/todos`).send(newTodo);
+
+    // Then
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(newTodo);
+  });
 });
