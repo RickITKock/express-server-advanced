@@ -18,15 +18,17 @@ app.get("/todos", (req, res) => {
 });
 
 app.get("/todos/:id", (req, res) => {
-  const foundTodo = todos.find((todo) => todo.id === req.params.id);
-  // console.log(foundTodo);
-  const parsedFoundTodo = Todo.safeParse(foundTodo);
-  // console.log(parsedFoundTodo);
-  if (!parsedFoundTodo.success) {
-    // console.log(parsedFoundTodo);
+  try {
+    const foundTodo = todos.find((todo) => todo.id === req.params.id);
+    const parsedFoundTodo = Todo.safeParse(foundTodo);
+    if (parsedFoundTodo.success) {
+      res.status(200).send(foundTodo);
+    }
+    throw parsedFoundTodo;
+  } catch (err) {
+    console.error(err);
     res.status(404).send("Not Found");
   }
-  res.status(200).send(foundTodo);
 });
 
 export default app;
