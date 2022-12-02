@@ -6,7 +6,7 @@ import app from "../app";
 type Todo = z.infer<typeof Todo>;
 
 describe("Todos API", () => {
-  it("GET /todos --> Array of todos", async () => {
+  it("GET (200) /todos --> Array of todos", async () => {
     // Given
     // When
     const response = await request(app).get(`/todos`);
@@ -16,7 +16,7 @@ describe("Todos API", () => {
     expect(response.body).toEqual(expect.arrayContaining(Array<Todo>()));
   });
 
-  it("GET /todos/:id --> Single todo item", async () => {
+  it("GET (200) /todos/:id --> Single todo item", async () => {
     // Given
     const todoId = 2;
 
@@ -26,6 +26,18 @@ describe("Todos API", () => {
     // Then
     expect(response.status).toBe(200);
     expect(Todo.safeParse(response.body).success).toBe(true);
+  });
+
+  it("GET (404) /todos/:id --> Not Found Error", async () => {
+    // Given
+    const todoId = 3;
+
+    // When
+    const response = await request(app).get(`/todos/${todoId}`);
+
+    // Then
+    expect(Todo.safeParse(response.body).success).toBe(false);
+    expect(response.status).toBe(404);
   });
 
   // it("POST /todos --> created todo", () => {});
