@@ -37,6 +37,8 @@ app.post("/todos", (req, res) => {
     const newTodo = req.body;
     const parsedNewTodo = Todo.safeParse(newTodo);
     if (parsedNewTodo.success) {
+      todos.push(newTodo);
+      console.table(todos);
       res.status(200).send(newTodo);
     }
     throw parsedNewTodo;

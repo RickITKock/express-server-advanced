@@ -1,6 +1,6 @@
 import request from "supertest";
 import { Todo } from "../models/Todo";
-import { z } from "zod";
+import { string, z } from "zod";
 import app from "../app";
 
 type Todo = z.infer<typeof Todo>;
@@ -42,13 +42,20 @@ describe("Todos API", () => {
 
   it("POST (200) /todos --> Create a new Todo", async () => {
     // Given
-    const newTodo: Todo = { id: "3", todo: "New todo item" };
+    const todosResponse = await request(app).get(`/todos`);
+    const arrayOfTodos = todosResponse.body || [];
+
+    const newTodo: Todo = {
+      id: `${arrayOfTodos.length + 1}`,
+      todo: "New todo item",
+    };
 
     // When
     const response = await request(app).post(`/todos`).send(newTodo);
 
     // Then
     expect(response.status).toBe(200);
+    expect(Todo.safeParse(response.body).success).toBe(true);
     expect(response.body).toEqual(newTodo);
   });
 });
