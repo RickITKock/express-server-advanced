@@ -58,4 +58,22 @@ describe("Todos API", () => {
     expect(Todo.safeParse(response.body).success).toBe(true);
     expect(response.body).toEqual(newTodo);
   });
+
+  it("POST (400) /todos --> Bad request", async () => {
+    // Given
+    const todosResponse = await request(app).get(`/todos`);
+    const arrayOfTodos = todosResponse.body || [];
+
+    const invalidTodo: any = {
+      id: `${arrayOfTodos.length + 1}`,
+      todod: "New todo item",
+    };
+
+    // When
+    const response = await request(app).post(`/todos`).send(invalidTodo);
+
+    // Then
+    expect(response.status).toBe(400);
+    expect(Todo.safeParse(response.body).success).toBe(false);
+  });
 });
