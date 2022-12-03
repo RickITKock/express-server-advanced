@@ -32,4 +32,18 @@ app.get("/todos/:id", (req, res) => {
   }
 });
 
+app.post("/todos", (req, res) => {
+  try {
+    const newTodo = req.body;
+    const parsedNewTodo = Todo.safeParse(newTodo);
+    if (parsedNewTodo.success) {
+      res.status(200).send(newTodo);
+    }
+    throw parsedNewTodo;
+  } catch (err) {
+    logger.error(err);
+    res.status(400).send("Bad Request");
+  }
+});
+
 export default app;
