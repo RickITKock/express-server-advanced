@@ -7,8 +7,7 @@ type Todo = z.infer<typeof Todo>;
 
 describe("Todos API", () => {
   it("GET (200) /todos --> Array of todos", async () => {
-    // Given
-    // When
+    // Given, When
     const response = await request(app).get(`/todos`);
 
     // Then
@@ -44,7 +43,6 @@ describe("Todos API", () => {
     // Given
     const todosResponse = await request(app).get(`/todos`);
     const arrayOfTodos = todosResponse.body || [];
-
     const newTodo: Todo = {
       id: `${arrayOfTodos.length + 1}`,
       todo: "New todo item",
@@ -63,7 +61,6 @@ describe("Todos API", () => {
     // Given
     const todosResponse = await request(app).get(`/todos`);
     const arrayOfTodos = todosResponse.body || [];
-
     const invalidTodo: any = {
       id: `${arrayOfTodos.length + 1}`,
       todod: "New todo item",
@@ -75,5 +72,23 @@ describe("Todos API", () => {
     // Then
     expect(response.status).toBe(400);
     expect(Todo.safeParse(response.body).success).toBe(false);
+  });
+
+  it("DELETE (204) /todos --> Delete a Todo", async () => {
+    // Given
+    const todosResponse = await request(app).get(`/todos`);
+    const arrayOfTodos = todosResponse.body || [];
+    const id = arrayOfTodos.length + 1;
+    const newTodo: Todo = {
+      id: `${id}`,
+      todo: "New todo item",
+    };
+
+    // When
+    const response = await request(app).post(`/todos`).send(newTodo);
+    const deleteTodo = await request(app).delete(`/todos/${id}`).send(newTodo);
+
+    // Then
+    expect(deleteTodo.status).toBe(204);
   });
 });
