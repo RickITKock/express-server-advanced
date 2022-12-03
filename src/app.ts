@@ -38,13 +38,26 @@ app.post("/todos", (req, res) => {
     const parsedNewTodo = Todo.safeParse(newTodo);
     if (parsedNewTodo.success) {
       todos.push(newTodo);
-
       res.status(200).send(newTodo);
     }
     throw parsedNewTodo;
   } catch (err) {
     logger.error(err);
     res.status(400).send("Bad Request");
+  }
+});
+
+app.delete("/todos/:id", (req, res) => {
+  try {
+    const foundTodo = todos.find((todo) => todo.id === req.params.id);
+    const parsedFoundTodo = Todo.safeParse(foundTodo);
+    if (parsedFoundTodo.success) {
+      res.status(204).send();
+    }
+    throw parsedFoundTodo;
+  } catch (err) {
+    logger.error(err);
+    res.status(404).send("Not Found");
   }
 });
 
