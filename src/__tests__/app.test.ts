@@ -91,4 +91,16 @@ describe("Todos API", () => {
     // Then
     expect(deleteTodo.status).toBe(204);
   });
+
+  it("DELETE (404) /todos/:id --> Not Found Error", async () => {
+    // Given
+    const todoId = 3;
+
+    // When
+    const response = await request(app).delete(`/todos/${todoId}`);
+
+    // Then
+    expect(Todo.safeParse(response.body).success).toBe(false);
+    expect(response.status).toBe(404);
+  });
 });
