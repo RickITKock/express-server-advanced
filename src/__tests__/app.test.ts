@@ -81,7 +81,7 @@ describe("Todos API", () => {
     const id = arrayOfTodos.length + 1;
     const newTodo: Todo = {
       id: `${id}`,
-      todo: "New todo item",
+      todo: "New todo item 2",
     };
 
     // When
@@ -94,7 +94,7 @@ describe("Todos API", () => {
 
   it("DELETE (404) /todos/:id --> Not Found Error", async () => {
     // Given
-    const todoId = 3;
+    const todoId = 5;
 
     // When
     const response = await request(app).delete(`/todos/${todoId}`);
