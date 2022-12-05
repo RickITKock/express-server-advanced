@@ -1,9 +1,10 @@
 import express, { Application } from "express";
 import { z } from "zod";
 import { logger } from "./logger";
-import { Todo } from "./models/Todo";
+import { Todo, Todos } from "./models/Todo";
 
 type Todo = z.infer<typeof Todo>;
+type Todos = z.infer<typeof Todos>;
 
 const todos: Array<Todo> = [
   { id: "1", todo: "Todo list item 1" },
@@ -20,15 +21,30 @@ app.get("/todos", (req, res) => {
 
 app.get("/todos/:id", (req, res) => {
   try {
-    console.log(req.query);
-    const foundTodo = todos.find((todo) => todo.id === req.params.id);
-    const parsedFoundTodo = Todo.safeParse(foundTodo);
-    if (parsedFoundTodo.success) {
-      res.status(200).send(foundTodo);
+    const idParam = req.query.id || req.params.id;
+    let foundTodos: Array<Todo> = [];
+    if (typeof idParam === "string") {
+      const idParamSplit = idParam.split(",").map((split) => split.trim());
+      foundTodos = todos.filter((todo) => {
+        return idParamSplit.includes(todo.id.trim());
+      });
+      const parsedFoundTodos = Todos.safeParse(foundTodos);
+      if (parsedFoundTodos.success) {
+        if (foundTodos.length > 1) {
+          res.status(200).send(foundTodos);
+        } else {
+          const parsedFoundTodo = Todo.safeParse(foundTodos[0]);
+          if (parsedFoundTodo.success) {
+            res.status(200).send(foundTodos[0]);
+          } else {
+            throw parsedFoundTodo;
+          }
+        }
+      }
+      throw parsedFoundTodos;
     }
-    throw parsedFoundTodo;
+    res.status(400).send("Bad request");
   } catch (err) {
-    logger.error(err);
     res.status(404).send("Not Found");
   }
 });

@@ -1,9 +1,10 @@
 import request from "supertest";
-import { Todo } from "../models/Todo";
+import { Todo, Todos } from "../models/Todo";
 import { string, z } from "zod";
 import app from "../app";
 
 type Todo = z.infer<typeof Todo>;
+type Todos = z.infer<typeof Todos>;
 
 describe("Todos API", () => {
   it("GET (200) /todos --> Array of todos", async () => {
@@ -27,9 +28,9 @@ describe("Todos API", () => {
     expect(Todo.safeParse(response.body).success).toBe(true);
   });
 
-  it.only("GET (200) /todos/:id --> Mutliple todo items by ids", async () => {
+  it("GET (200) /todos/:id --> Mutliple todo items by ids", async () => {
     // Given
-    const todoIds = [1, 2];
+    const todoIds = [1, 2]; //, 2];
 
     // When
     const response = await request(app).get(
@@ -38,15 +39,16 @@ describe("Todos API", () => {
 
     // Then
     expect(response.status).toBe(200);
-    expect(Todo.safeParse(response.body).success).toBe(true);
+    expect(Todos.safeParse(response.body).success).toBe(true);
   });
 
   it("GET (404) /todos/:id --> Not Found Error", async () => {
     // Given
-    const todoId = 3;
+    const todoId = 5;
 
     // When
     const response = await request(app).get(`/todos/${todoId}`);
+    console.log(response.body);
 
     // Then
     expect(Todo.safeParse(response.body).success).toBe(false);
