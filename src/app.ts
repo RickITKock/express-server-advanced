@@ -20,6 +20,7 @@ app.get("/todos", (req, res) => {
 
 app.get("/todos/:id", (req, res) => {
   try {
+    console.log(req.query);
     const foundTodo = todos.find((todo) => todo.id === req.params.id);
     const parsedFoundTodo = Todo.safeParse(foundTodo);
     if (parsedFoundTodo.success) {

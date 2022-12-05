@@ -27,6 +27,20 @@ describe("Todos API", () => {
     expect(Todo.safeParse(response.body).success).toBe(true);
   });
 
+  it.only("GET (200) /todos/:id --> Mutliple todo items by ids", async () => {
+    // Given
+    const todoIds = [1, 2];
+
+    // When
+    const response = await request(app).get(
+      `/todos/id?id=${todoIds[0]}, ${todoIds[1]}`
+    );
+
+    // Then
+    expect(response.status).toBe(200);
+    expect(Todo.safeParse(response.body).success).toBe(true);
+  });
+
   it("GET (404) /todos/:id --> Not Found Error", async () => {
     // Given
     const todoId = 3;
