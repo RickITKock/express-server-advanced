@@ -22,20 +22,21 @@ app.get("/todos", (req, res) => {
 app.get("/todos/:id", (req, res) => {
   try {
     const idParam = req.query.id || req.params.id;
-    let foundTodos: Array<Todo> = [];
     if (typeof idParam === "string") {
       const idParamSplit = idParam.split(",").map((split) => split.trim());
-      foundTodos = todos.filter((todo) => {
-        return idParamSplit.includes(todo.id.trim());
+      const foundTodos: Array<Todo> = todos.filter((todo) => {
+        const id = todo.id.trim();
+        return idParamSplit.includes(id);
       });
       const parsedFoundTodos = Todos.safeParse(foundTodos);
       if (parsedFoundTodos.success) {
         if (foundTodos.length > 1) {
           res.status(200).send(foundTodos);
         } else {
-          const parsedFoundTodo = Todo.safeParse(foundTodos[0]);
+          const foundTodo = foundTodos[0];
+          const parsedFoundTodo = Todo.safeParse(foundTodo);
           if (parsedFoundTodo.success) {
-            res.status(200).send(foundTodos[0]);
+            res.status(200).send(foundTodo);
           } else {
             throw parsedFoundTodo;
           }
@@ -43,7 +44,7 @@ app.get("/todos/:id", (req, res) => {
       }
       throw parsedFoundTodos;
     }
-    res.status(400).send("Bad request");
+    res.status(400).send("Bad Request");
   } catch (err) {
     res.status(404).send("Not Found");
   }

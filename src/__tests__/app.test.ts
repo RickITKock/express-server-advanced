@@ -30,7 +30,7 @@ describe("Todos API", () => {
 
   it("GET (200) /todos/:id --> Mutliple todo items by ids", async () => {
     // Given
-    const todoIds = [1, 2]; //, 2];
+    const todoIds = [1, 2];
 
     // When
     const response = await request(app).get(
