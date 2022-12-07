@@ -59,6 +59,24 @@ describe("Todos API", () => {
     // Given
     const todosResponse = await request(app).get(`/todos`);
     const arrayOfTodos = todosResponse.body || [];
+    const updatedTodo: Todo = {
+      id: `${arrayOfTodos.length - 1}`,
+      todo: "Updated todo item",
+    };
+
+    // When
+    const response = await request(app).put(`/todos`).send(updatedTodo);
+
+    // Then
+    expect(response.status).toBe(200);
+    expect(Todo.safeParse(response.body).success).toBe(true);
+    expect(response.body).toEqual(updatedTodo);
+  });
+
+  it("PUT (200) /todos --> Update a Todo", async () => {
+    // Given
+    const todosResponse = await request(app).get(`/todos`);
+    const arrayOfTodos = todosResponse.body || [];
     const newTodo: Todo = {
       id: `${arrayOfTodos.length + 1}`,
       todo: "New todo item",
