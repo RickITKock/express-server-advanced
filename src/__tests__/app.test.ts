@@ -65,7 +65,7 @@ describe("Todos API", () => {
     };
 
     // When
-    const response = await request(app).put(`/todos`).send(updatedTodo);
+    const response = await request(app).post(`/todos`).send(updatedTodo);
 
     // Then
     expect(response.status).toBe(200);
@@ -83,7 +83,7 @@ describe("Todos API", () => {
     };
 
     // When
-    const response = await request(app).post(`/todos`).send(newTodo);
+    const response = await request(app).put(`/todos`).send(newTodo);
 
     // Then
     expect(response.status).toBe(200);
